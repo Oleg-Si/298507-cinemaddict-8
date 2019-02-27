@@ -4,11 +4,49 @@ import cardTemplate from '../src/card-template.js';
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
 
-mainNavigationField.appendChild(makeFilter(`All movies`, `#all`, 0, true));
-mainNavigationField.appendChild(makeFilter(`Watchlist`, `#watchlist`, 13));
-mainNavigationField.appendChild(makeFilter(`History`, `#history`, 4));
-mainNavigationField.appendChild(makeFilter(`Favorites`, `#favorites`, 8));
-mainNavigationField.appendChild(makeFilter(`Stats`, `#stats`, 0, false, true));
+const filtersArguments = [
+  {
+    name: `All movies`,
+    href: `#all`,
+    count: 0,
+    checked: true,
+    additional: false
+  },
+  {
+    name: `Watchlist`,
+    href: `#watchlist`,
+    count: 13,
+    checked: false,
+    additional: false
+  },
+  {
+    name: `History`,
+    href: `#history`,
+    count: 4,
+    checked: false,
+    additional: false
+  },
+  {
+    name: `Favorites`,
+    href: `#favorites`,
+    count: 8,
+    checked: false,
+    additional: false
+  },
+  {
+    name: `Stats`,
+    href: `#stats`,
+    count: 0,
+    checked: false,
+    additional: true
+  }
+];
+
+const filtersContent = document.createDocumentFragment();
+filtersArguments.forEach((el) => {
+  filtersContent.appendChild(makeFilter(el));
+});
+mainNavigationField.appendChild(filtersContent);
 
 const renderCard = (count) => {
   const fragment = document.createDocumentFragment();
@@ -16,7 +54,7 @@ const renderCard = (count) => {
   for (let i = 0; i < count; i++) {
     const element = document.createElement(`article`);
     element.classList.add(`film-card`);
-    element.innerHTML = cardTemplate;
+    element.innerHTML = cardTemplate();
 
     fragment.appendChild(element);
   }

@@ -1,6 +1,6 @@
-export default (name, href, count, active = false, additional = false) => {
+export default (argumentsList) => {
 
-  const template = `<a href="${href}" class="main-navigation__item  ${active ? `main-navigation__item--active` : ``} ${additional ? `main-navigation__item--additional` : ``}">${name} ${(count > 0) ? `<span class="main-navigation__item-count">${count}</span>` : ``}</a>`;
+  const template = `<a href="${argumentsList.href}" class="main-navigation__item  ${argumentsList.checked ? `main-navigation__item--active` : ``} ${argumentsList.additional ? `main-navigation__item--additional` : ``}">${argumentsList.name} ${(argumentsList.count > 0) ? `<span class="main-navigation__item-count">${argumentsList.count}</span>` : ``}</a>`;
 
   const element = document.createElement(`template`);
   element.innerHTML = template;
