@@ -1,6 +1,7 @@
 import makeFilter from '../src/make-filter.js';
 import getRandomInt from '../src/get-random-integer.js';
 import cardTemplate from '../src/card-template.js';
+import getCardData from '../src/get-card-data.js';
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
 
@@ -54,7 +55,7 @@ const renderCard = (count) => {
   for (let i = 0; i < count; i++) {
     const element = document.createElement(`article`);
     element.classList.add(`film-card`);
-    element.innerHTML = cardTemplate();
+    element.innerHTML = cardTemplate(getCardData());
 
     fragment.appendChild(element);
   }
