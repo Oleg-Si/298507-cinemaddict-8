@@ -2,11 +2,18 @@ export default (dataObj) => {
   const year = [...dataObj.year][Math.floor(Math.random() * 5)];
   const genre = [...dataObj.genre][Math.floor(Math.random() * 5)];
 
+  const formatTime = (seconds) => {
+    const hour = Math.floor(seconds / 3600);
+    const minute = Math.floor((seconds % 3600) / 60);
+
+    return `${hour}h ${minute}m`;
+  };
+
   const template = `<h3 class="film-card__title">${dataObj.title}</h3>
   <p class="film-card__rating">${dataObj.rating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${year}</span>
-    <span class="film-card__duration">${dataObj.time}</span>
+<span class="film-card__duration">${formatTime(dataObj.time)}</span>
     <span class="film-card__genre">${genre}</span>
   </p>
   <img src="${dataObj.image}" alt="" class="film-card__poster">
