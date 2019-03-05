@@ -1,6 +1,7 @@
 import makeFilter from '../src/make-filter.js';
 import getRandomInt from '../src/get-random-integer.js';
-import cardTemplate from '../src/card-template.js';
+import filmCard from '../src/film-card.js';
+//import cardTemplate from '../src/card-template.js';
 import getCardData from '../src/get-card-data.js';
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
@@ -53,25 +54,23 @@ mainNavigationField.appendChild(filtersContent);
 const createCards = (count) => {
   const allCard = [];
   for (let i = 0; i < count; i++) {
-    allCard.push(cardTemplate(getCardData()));
+    allCard.push(new FilmCard(getCardData()));
   }
   return allCard;
 };
 
-const renderCards = (cardsArr) => {
-  const fragment = document.createDocumentFragment();
-  cardsArr.forEach((el) => {
-    const element = document.createElement(`article`);
-    element.classList.add(`film-card`);
-    element.innerHTML = el;
+const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
 
-    fragment.appendChild(element);
-  });
+const renderCards = (cards) => {
+  const fragment = document.createDocumentFragment();
+  for (const card of cards) {
+    card.render(fragment);
+    card.onClick();
+  }
 
   return fragment;
 };
 
-const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
 mainFilmsLabel.appendChild(renderCards(createCards(7)));
 
 const extraFilmsLabels = document.querySelectorAll(`.films-list--extra .films-list__container`);
