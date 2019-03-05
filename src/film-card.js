@@ -52,8 +52,8 @@ export default class filmCard {
     </article>`;
   }
 
-  onClick(func) {
-    this._element.querySelector(`.film-card__comments`).addEventListener('click', this._onCommentButtonClick.bind(this, func));
+  set onClick(func) {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onCommentButtonClick.bind(this, func));
   }
 
   render(container, onClick = null) {
@@ -64,8 +64,8 @@ export default class filmCard {
 
     this._element = createElement(this.template);
 
-    if (typeof onClick === 'function') {
-      this.onClick(onClick);
+    if (typeof onClick === `function`) {
+      this.onClick = onClick;
     }
 
     container.appendChild(this._element);

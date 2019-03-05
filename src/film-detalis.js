@@ -2,14 +2,18 @@ import createElement from '../src/create-element.js';
 
 export default class filmDetalis {
   constructor(data) {
-    this._image = data.image;
-    this._title = data.title;
-    this._description = data.description;
-    this._rating = data.rating;
-    this._year = data.year;
-    this._time = data.time;
-    this._genre = data.genre;
-    this._comments = data.comments;
+    this._image = data._image;
+    this._title = data._title;
+    this._description = data._description;
+    this._rating = data._rating;
+    this._year = data._year;
+    this._time = data._time;
+    this._genre = data._genre;
+    this._comments = data._comments;
+  }
+
+  _getGenre() {
+    return [...this._genre][Math.floor(Math.random() * 5)];
   }
 
   get template() {
@@ -20,20 +24,19 @@ export default class filmDetalis {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="images/posters/blackmail.jpg" alt="incredables-2">
-
+            <img class="film-details__poster-img" src="${this._image}" alt="incredables-2">
             <p class="film-details__age">18+</p>
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
-                <h3 class="film-details__title">Incredibles 2</h3>
+                <h3 class="film-details__title">${this._title}</h3>
                 <p class="film-details__title-original">Original: Невероятная семейка</p>
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">5.2</p>
+                <p class="film-details__total-rating">${this._rating}</p>
                 <p class="film-details__user-rating">Your rate 8</p>
               </div>
             </div>
@@ -66,15 +69,14 @@ export default class filmDetalis {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                <span class="film-details__genre">Animation</span>
+                <span class="film-details__genre">${this._getGenre()}</span>
                 <span class="film-details__genre">Action</span>
                 <span class="film-details__genre">Adventure</span></td>
               </tr>
             </table>
 
             <p class="film-details__film-description">
-              The Incredibles hero family takes on a new mission, which involves a change in family roles:
-              Bob Parr (Mr Incredible) must manage the house while his wife Helen (Elastigirl) goes out to save the world.
+              ${this._description}
             </p>
           </div>
         </div>
@@ -136,11 +138,11 @@ export default class filmDetalis {
 
         <div class="film-details__user-score">
           <div class="film-details__user-rating-poster">
-            <img src="images/posters/blackmail.jpg" alt="film-poster" class="film-details__user-rating-img">
+            <img src="${this._image}" alt="film-poster" class="film-details__user-rating-img">
           </div>
 
           <section class="film-details__user-rating-inner">
-            <h3 class="film-details__user-rating-title">Incredibles 2</h3>
+            <h3 class="film-details__user-rating-title">${this._title}</h3>
 
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
@@ -180,13 +182,26 @@ export default class filmDetalis {
     </section>`;
   }
 
-  render(container) {
+  _onCloseButtonClick(func) {
+    func();
+  }
+
+  set onClick(func) {
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this, func));
+  }
+
+  render(container, onClick = null) {
     if (this._element) {
       container.removeChild(this._element);
       this._element = null;
     }
 
     this._element = createElement(this.template);
+
+    if (typeof onClick === `function`) {
+      this.onClick = onClick;
+    }
+
     container.appendChild(this._element);
   }
 }

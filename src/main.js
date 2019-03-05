@@ -2,7 +2,6 @@ import makeFilter from '../src/make-filter.js';
 import getRandomInt from '../src/get-random-integer.js';
 import FilmCard from '../src/film-card.js';
 import FilmDetalis from '../src/film-detalis.js';
-//import cardTemplate from '../src/card-template.js';
 import getCardData from '../src/get-card-data.js';
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
@@ -60,17 +59,21 @@ const createCards = (count) => {
   return allCard;
 };
 
-const createListener = () => {
-  new FilmDetalis(getCardData()).render(body)
-}
-
 const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
 const body = document.querySelector(`body`);
+
+const createFilmsDetalis = (data) => {
+  new FilmDetalis(data).render(body, closeFilmDetalis);
+};
+const closeFilmDetalis = () => {
+  const element = document.querySelector(`.film-details`);
+  body.removeChild(element);
+};
 
 const renderCards = (cards) => {
   const fragment = document.createDocumentFragment();
   for (const card of cards) {
-    card.render(fragment, createListener);
+    card.render(fragment, createFilmsDetalis.bind(``, card));
   }
 
   return fragment;
