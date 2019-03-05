@@ -27,8 +27,8 @@ export default class filmCard {
     return [...this._genre][Math.floor(Math.random() * 5)];
   }
 
-  _onCommentButtonClick() {
-    //console.log('top');
+  _onCommentButtonClick(func) {
+    func();
   }
 
   get template() {
@@ -52,17 +52,22 @@ export default class filmCard {
     </article>`;
   }
 
-  onClick() {
-    this._element.querySelector(`button.film-card__comments`).addEventListener('click', this._onCommentButtonClick.bind(this));
+  onClick(func) {
+    this._element.querySelector(`.film-card__comments`).addEventListener('click', this._onCommentButtonClick.bind(this, func));
   }
 
-  render(container) {
+  render(container, onClick = null) {
     if (this._element) {
       container.removeChild(this._element);
       this._element = null;
     }
 
     this._element = createElement(this.template);
+
+    if (typeof onClick === 'function') {
+      this.onClick(onClick);
+    }
+
     container.appendChild(this._element);
   }
 }
