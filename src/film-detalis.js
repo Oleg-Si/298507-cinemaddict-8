@@ -1,15 +1,18 @@
 import createElement from '../src/create-element.js';
 
-export default class filmDetalis {
+export default class {
   constructor(data) {
-    this._image = data._image;
-    this._title = data._title;
-    this._description = data._description;
-    this._rating = data._rating;
-    this._year = data._year;
-    this._time = data._time;
-    this._genre = data._genre;
-    this._comments = data._comments;
+    this._image = data.image;
+    this._title = data.title;
+    this._description = data.description;
+    this._rating = data.rating;
+    this._year = data.year;
+    this._time = data.time;
+    this._genre = data.genre;
+    this._comments = data.comments;
+
+    this._element = null;
+    this._onClick = null;
   }
 
   _getGenre() {
@@ -182,26 +185,27 @@ export default class filmDetalis {
     </section>`;
   }
 
-  _onCloseButtonClick(func) {
-    func();
-  }
-
   set onClick(func) {
-    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onCloseButtonClick.bind(this, func));
+    if (typeof func === `function`) {
+      this._onClick = func;
+    }
   }
 
-  render(container, onClick = null) {
-    if (this._element) {
-      container.removeChild(this._element);
-      this._element = null;
-    }
+  bind() {
+    this._element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._onClick.bind(this));
+  }
 
+  get element() {
+    return this._element;
+  }
+
+  render() {
     this._element = createElement(this.template);
+    this.bind();
+    return this._element;
+  }
 
-    if (typeof onClick === `function`) {
-      this.onClick = onClick;
-    }
-
-    container.appendChild(this._element);
+  unrender() {
+    this._element = null;
   }
 }

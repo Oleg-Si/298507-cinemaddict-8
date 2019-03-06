@@ -1,6 +1,6 @@
 import createElement from '../src/create-element.js';
 
-export default class filmCard {
+export default class {
   constructor(data) {
     this._image = data.image;
     this._title = data.title;
@@ -10,6 +10,9 @@ export default class filmCard {
     this._time = data.time;
     this._genre = data.genre;
     this._comments = data.comments;
+
+    this._element = null;
+    this._onClick = null;
   }
 
   _formatTime(seconds) {
@@ -25,10 +28,6 @@ export default class filmCard {
 
   _getGenre() {
     return [...this._genre][Math.floor(Math.random() * 5)];
-  }
-
-  _onCommentButtonClick(func) {
-    func();
   }
 
   get template() {
@@ -53,21 +52,22 @@ export default class filmCard {
   }
 
   set onClick(func) {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onCommentButtonClick.bind(this, func));
+    if (typeof func === `function`) {
+      this._onClick = func;
+    }
   }
 
-  render(container, onClick = null) {
-    if (this._element) {
-      container.removeChild(this._element);
-      this._element = null;
-    }
+  bind() {
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onClick.bind(this));
+  }
 
+  render() {
     this._element = createElement(this.template);
+    this.bind();
+    return this._element;
+  }
 
-    if (typeof onClick === `function`) {
-      this.onClick = onClick;
-    }
-
-    container.appendChild(this._element);
+  unrender() {
+    this._element = null;
   }
 }

@@ -54,7 +54,7 @@ mainNavigationField.appendChild(filtersContent);
 const createCards = (count) => {
   const allCard = [];
   for (let i = 0; i < count; i++) {
-    allCard.push(new FilmCard(getCardData()));
+    allCard.push(getCardData());
   }
   return allCard;
 };
@@ -62,28 +62,31 @@ const createCards = (count) => {
 const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
 const body = document.querySelector(`body`);
 
-const createFilmsDetalis = (data) => {
-  new FilmDetalis(data).render(body, closeFilmDetalis);
-};
-const closeFilmDetalis = () => {
-  const element = document.querySelector(`.film-details`);
-  body.removeChild(element);
-};
-
-const renderCards = (cards) => {
+const createFilmMarkdown = (allCards) => {
   const fragment = document.createDocumentFragment();
-  for (const card of cards) {
-    card.render(fragment, createFilmsDetalis.bind(``, card));
+  for (const card of allCards) {
+    const newFilm = new FilmCard(card);
+    const newFilmDetalis = new FilmDetalis(card);
+
+    newFilm.onClick = () => {
+      body.appendChild(newFilmDetalis.render());
+    };
+    newFilmDetalis.onClick = () => {
+      body.removeChild(newFilmDetalis.element);
+      newFilmDetalis.unrender();
+    };
+
+    fragment.appendChild(newFilm.render());
   }
 
   return fragment;
 };
 
-mainFilmsLabel.appendChild(renderCards(createCards(7)));
+mainFilmsLabel.appendChild(createFilmMarkdown(createCards(7)));
 
 const extraFilmsLabels = document.querySelectorAll(`.films-list--extra .films-list__container`);
 extraFilmsLabels.forEach((el) => {
-  el.appendChild(renderCards(createCards(2)));
+  el.appendChild(createFilmMarkdown(createCards(2)));
 });
 
 const filters = document.querySelectorAll(`.main-navigation a`);
@@ -91,6 +94,6 @@ filters.forEach((el) => {
   el.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     mainFilmsLabel.innerHTML = ``;
-    mainFilmsLabel.appendChild(renderCards(createCards(getRandomInt(1, 5))));
+    mainFilmsLabel.appendChild(createFilmMarkdown(createCards(getRandomInt(1, 5))));
   });
 });
