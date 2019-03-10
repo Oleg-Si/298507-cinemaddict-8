@@ -1,7 +1,8 @@
-import createElement from '../src/create-element.js';
+import Component from '../src/component.js';
 
-export default class {
+export default class FilmCard extends Component {
   constructor(data) {
+    super();
     this._image = data.image;
     this._title = data.title;
     this._description = data.description;
@@ -11,8 +12,7 @@ export default class {
     this._genre = data.genre;
     this._comments = data.comments;
 
-    this._element = null;
-    this._onClick = null;
+    this._onCommentButtonClick = this._onCommentButtonClick.bind(this);
   }
 
   _formatTime(seconds) {
@@ -28,6 +28,10 @@ export default class {
 
   _getGenre() {
     return [...this._genre][Math.floor(Math.random() * 5)];
+  }
+
+  _onCommentButtonClick() {
+    this._onClick();
   }
 
   get template() {
@@ -51,23 +55,11 @@ export default class {
     </article>`;
   }
 
-  set onClick(func) {
-    if (typeof func === `function`) {
-      this._onClick = func;
-    }
-  }
-
   bind() {
-    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onClick.bind(this));
+    this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onCommentButtonClick);
   }
 
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this._element = null;
+  unbind() {
+    this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onCommentButtonClick);
   }
 }
