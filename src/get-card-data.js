@@ -14,7 +14,6 @@ export default () => ({
     `Adventure`,
     `Documentary`
   ]),
-  comments: getRandomInt(0, 45),
   userRating: {
     1: false,
     2: false,

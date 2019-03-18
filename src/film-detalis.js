@@ -19,7 +19,6 @@ export default class FilmDetalis extends Component {
     this._timeStamp = data.timeStamp;
     this._runtime = data.runtime;
     this._genre = data.genre;
-    this._comments = data.comments;
     this._userRating = data.userRating;
     this._userComments = data.userComments;
     this._userEmoji = data.userEmoji;
@@ -61,6 +60,16 @@ export default class FilmDetalis extends Component {
     this._onClick();
   }
 
+  _getUserRating() {
+    let index;
+    [...Object.entries(this._userRating)].some((el, i) => {
+      index = i;
+      return el[1];
+    });
+
+    return index + 1;
+  }
+
   _onUserRatingChange() {}
   _onUserCommentSend() {}
 
@@ -73,7 +82,7 @@ export default class FilmDetalis extends Component {
   }
 
   _onCommentKeydown(event) {
-    if (event.keyCode === 13) {
+    if (event.ctrlKey && event.keyCode === 13) {
       const newData = this._getNewData();
       this._onUserCommentSend(newData);
     }
@@ -162,7 +171,7 @@ export default class FilmDetalis extends Component {
 
               <div class="film-details__rating">
                 <p class="film-details__total-rating">${this._rating}</p>
-                <p class="film-details__user-rating">Your rate 8</p>
+                <p class="film-details__user-rating">Your rate ${this._getUserRating()}</p>
               </div>
             </div>
 

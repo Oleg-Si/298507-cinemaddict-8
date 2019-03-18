@@ -11,7 +11,7 @@ export default class FilmCard extends Component {
     this._timeStamp = data.timeStamp;
     this._runtime = data.runtime;
     this._genre = data.genre;
-    this._comments = data.comments;
+    this._userComments = data.userComments;
 
     this._onCommentButtonClick = this._onCommentButtonClick.bind(this);
   }
@@ -35,7 +35,7 @@ export default class FilmCard extends Component {
       </p>
       <img src="${this._image}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
-      <button class="film-card__comments">${this._comments} comments</button>
+      <button class="film-card__comments">${this._userComments.length} comments</button>
 
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
@@ -52,6 +52,4 @@ export default class FilmCard extends Component {
   unbind() {
     this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onCommentButtonClick);
   }
-
-
 }
