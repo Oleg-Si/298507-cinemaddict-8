@@ -75,6 +75,20 @@ const createFilmMarkdown = (allCards) => {
       body.removeChild(newFilmDetalis.element);
       newFilmDetalis.unrender();
     };
+    newFilmDetalis.onUserRatingChange = (newData) => {
+      Object.assign(card, newData);
+      newFilmDetalis.update(card);
+
+      body.removeChild(newFilmDetalis.element);
+      newFilmDetalis.unrender();
+    };
+    newFilmDetalis.onUserCommentSend = (newData) => {
+      Object.assign(card, newData);
+      newFilmDetalis.update(card);
+
+      body.removeChild(newFilmDetalis.element);
+      newFilmDetalis.unrender();
+    };
 
     fragment.appendChild(newFilm.render());
   }
