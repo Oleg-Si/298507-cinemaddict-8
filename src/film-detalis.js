@@ -7,7 +7,6 @@ const Emoji = {
   'grinning': `😀`
 };
 
-
 export default class FilmDetalis extends Component {
   constructor(data) {
     super();
@@ -60,16 +59,6 @@ export default class FilmDetalis extends Component {
     this._onClick();
   }
 
-  _getUserRating() {
-    let index;
-    [...Object.entries(this._userRating)].some((el, i) => {
-      index = i;
-      return el[1];
-    });
-
-    return index + 1;
-  }
-
   _onUserRatingChange() {}
   _onUserCommentSend() {}
 
@@ -107,7 +96,7 @@ export default class FilmDetalis extends Component {
 
   _createMapper(target) {
     return {
-      'score': (value) => (target.userRating[value] = true),
+      'score': (value) => (target.userRating = value),
       'comment': (value) => (target.userComments = value),
       'comment-emoji': (value) => (target.userEmoji = value)
     };
@@ -115,17 +104,7 @@ export default class FilmDetalis extends Component {
 
   _processForm(data) {
     const entry = {
-      userRating: {
-        1: false,
-        2: false,
-        3: false,
-        4: false,
-        5: false,
-        6: false,
-        7: false,
-        8: false,
-        9: false,
-      },
+      userRating: ``,
       userComments: ``,
       userEmoji: ``
     };
@@ -171,7 +150,7 @@ export default class FilmDetalis extends Component {
 
               <div class="film-details__rating">
                 <p class="film-details__total-rating">${this._rating}</p>
-                <p class="film-details__user-rating">Your rate ${this._getUserRating()}</p>
+                <p class="film-details__user-rating">Your rate ${this._userRating}</p>
               </div>
             </div>
 
@@ -272,31 +251,31 @@ export default class FilmDetalis extends Component {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._userRating[1] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._userRating === `1` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._userRating[2] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._userRating === `2` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-2">2</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3"${this._userRating[3] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3"${this._userRating === `3` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-3">3</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4"${this._userRating[4] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4"${this._userRating === `4` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-4">4</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._userRating[5] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._userRating === `5` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-5">5</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6"${this._userRating[6] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6"${this._userRating === `6` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-6">6</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7"${this._userRating[7] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7"${this._userRating === `7` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-7">7</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8"${this._userRating[8] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8"${this._userRating === `8` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-8">8</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9"${this._userRating[9] ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9"${this._userRating === `9` ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-9">9</label>
 
             </div>

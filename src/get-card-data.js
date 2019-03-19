@@ -14,17 +14,7 @@ export default () => ({
     `Adventure`,
     `Documentary`
   ]),
-  userRating: {
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-    5: true,
-    6: false,
-    7: false,
-    8: false,
-    9: false,
-  },
+  userRating: `5`,
   userComments: [`So long-long story, boring!`],
   userCommentsDate: [`1552921169576`],
   userEmoji: [`neutral-face`]
