@@ -1,5 +1,5 @@
 import Component from '../src/component.js';
-const moment = require(`moment`);
+import moment from 'moment';
 
 const Emoji = {
   'sleeping': `😴`,
