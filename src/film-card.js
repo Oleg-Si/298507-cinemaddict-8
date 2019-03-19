@@ -1,4 +1,5 @@
 import Component from '../src/component.js';
+import moment from 'moment';
 
 export default class FilmCard extends Component {
   constructor(data) {
@@ -7,23 +8,12 @@ export default class FilmCard extends Component {
     this._title = data.title;
     this._description = data.description;
     this._rating = data.rating;
-    this._year = data.year;
-    this._time = data.time;
+    this._timeStamp = data.timeStamp;
+    this._runtime = data.runtime;
     this._genre = data.genre;
-    this._comments = data.comments;
+    this._userComments = data.userComments;
 
     this._onCommentButtonClick = this._onCommentButtonClick.bind(this);
-  }
-
-  _formatTime(seconds) {
-    const hour = Math.floor(seconds / 3600);
-    const minute = Math.floor((seconds % 3600) / 60);
-
-    return `${hour}h ${minute}m`;
-  }
-
-  _getYear() {
-    return [...this._year][Math.floor(Math.random() * 5)];
   }
 
   _getGenre() {
@@ -39,13 +29,13 @@ export default class FilmCard extends Component {
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${this._getYear()}</span>
-        <span class="film-card__duration">${this._formatTime(this._time)}</span>
+        <span class="film-card__year">${moment(this._timeStamp).format(`Y`)}</span>
+        <span class="film-card__duration">${moment.duration(this._runtime, `seconds`).hours()}h ${moment.duration(this._runtime, `seconds`).minutes()}m</span>
         <span class="film-card__genre">${this._getGenre()}</span>
       </p>
       <img src="${this._image}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
-      <button class="film-card__comments">${this._comments} comments</button>
+      <button class="film-card__comments">${this._userComments.length} comments</button>
 
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>

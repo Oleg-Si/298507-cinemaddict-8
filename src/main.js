@@ -75,6 +75,32 @@ const createFilmMarkdown = (allCards) => {
       body.removeChild(newFilmDetalis.element);
       newFilmDetalis.unrender();
     };
+    newFilmDetalis.onUserRatingChange = (newData) => {
+      Object.assign(card, newData);
+      newFilmDetalis.update(card);
+
+      let oldFilmCard = newFilm.element;
+      newFilm.unrender();
+      newFilm.render();
+      mainFilmsLabel.replaceChild(newFilm.element, oldFilmCard);
+      oldFilmCard = null;
+
+      body.removeChild(newFilmDetalis.element);
+      newFilmDetalis.unrender();
+    };
+    newFilmDetalis.onUserCommentSend = (newData) => {
+      Object.assign(card, newData);
+      newFilmDetalis.update(card);
+
+      let oldFilmCard = newFilm.element;
+      newFilm.unrender();
+      newFilm.render();
+      mainFilmsLabel.replaceChild(newFilm.element, oldFilmCard);
+      oldFilmCard = null;
+
+      body.removeChild(newFilmDetalis.element);
+      newFilmDetalis.unrender();
+    };
 
     fragment.appendChild(newFilm.render());
   }
