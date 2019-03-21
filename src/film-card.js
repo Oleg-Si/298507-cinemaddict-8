@@ -12,8 +12,12 @@ export default class FilmCard extends Component {
     this._runtime = data.runtime;
     this._genre = data.genre;
     this._userComments = data.userComments;
+    this._userState = data.userState;
 
     this._onCommentButtonClick = this._onCommentButtonClick.bind(this);
+    this._onAddToWatchList = this._onAddToWatchList.bind(this);
+    this._onAddToFavorites = this._onAddToFavorites.bind(this);
+    this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
   }
 
   _getGenre() {
@@ -22,6 +26,25 @@ export default class FilmCard extends Component {
 
   _onCommentButtonClick() {
     this._onClick();
+  }
+  _onAddToWatchList() {}
+  _onAddToFavorites() {}
+  _onMarkAsWatched() {}
+
+  set onAddToWatchList(func) {
+    if (typeof func === `function`) {
+      this._onAddToWatchList = func;
+    }
+  }
+  set onAddToFavorites(func) {
+    if (typeof func === `function`) {
+      this._onAddToFavorites = func;
+    }
+  }
+  set onMarkAsWatched(func) {
+    if (typeof func === `function`) {
+      this._onMarkAsWatched = func;
+    }
   }
 
   get template() {
@@ -47,9 +70,15 @@ export default class FilmCard extends Component {
 
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onCommentButtonClick);
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList);
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched);
+    this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onAddToFavorites);
   }
 
   unbind() {
     this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onCommentButtonClick);
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList);
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched);
+    this._element.querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onAddToFavorites);
   }
 }

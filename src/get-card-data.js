@@ -17,5 +17,10 @@ export default () => ({
   userRating: `5`,
   userComments: [`So long-long story, boring!`],
   userCommentsDate: [`1552921169576`],
-  userEmoji: [`neutral-face`]
+  userEmoji: [`neutral-face`],
+  userState: {
+    'isWatchlist': false,
+    'isFavorite': false,
+    'isWatched': false
+  }
 });

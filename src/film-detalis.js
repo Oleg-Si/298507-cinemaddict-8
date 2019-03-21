@@ -22,6 +22,7 @@ export default class FilmDetalis extends Component {
     this._userComments = data.userComments;
     this._userEmoji = data.userEmoji;
     this._userCommentsDate = data.userCommentsDate;
+    this._userState = data.userState;
 
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onUserRatingChange = this._onUserRatingChange.bind(this);
@@ -29,12 +30,13 @@ export default class FilmDetalis extends Component {
     this._onCommentKeydown = this._onCommentKeydown.bind(this);
     this._onUserCommentSend = this._onUserCommentSend.bind(this);
     this._onEmojiClick = this._onEmojiClick.bind(this);
+    this._onWatchedResetButtonClick = this._onWatchedResetButtonClick.bind(this);
+    this._onWatchedButtonClick = this._onWatchedButtonClick.bind(this);
   }
 
   _getGenre() {
     return [...this._genre][Math.floor(Math.random() * 5)];
   }
-
   _getUserComments() {
     const allUserComents = this._userComments.map((el, i) => {
       const template = `<li class="film-details__comment">
@@ -57,6 +59,21 @@ export default class FilmDetalis extends Component {
 
   _onCloseButtonClick() {
     this._onClick();
+  }
+
+  _onWatchedResetButtonClick() {
+    this._element.querySelector(`.film-details__watched-status`).classList.remove(`film-details__watched-status--active`);
+    this._element.querySelector(`.film-details__control-input#watched`).checked = false;
+  }
+  _onWatchedButtonClick() {
+    this._element.querySelector(`.film-details__watched-status`).classList.add(`film-details__watched-status--active`);
+  }
+  _onEmojiClick() {
+    if (event.target.classList.contains(`film-details__emoji-item`)) {
+      const emoji = event.target.getAttribute(`value`);
+      document.querySelector(`.film-details__add-emoji-label`).textContent = Emoji[emoji];
+    }
+    document.querySelector(`#add-emoji`).checked = false;
   }
 
   _onUserRatingChange() {}
@@ -98,7 +115,10 @@ export default class FilmDetalis extends Component {
     return {
       'score': (value) => (target.userRating = value),
       'comment': (value) => (target.userComments = value),
-      'comment-emoji': (value) => (target.userEmoji = value)
+      'comment-emoji': (value) => (target.userEmoji = value),
+      'watchlist': () => (target.userState.isWatchlist = true),
+      'watched': () => (target.userState.isWatched = true),
+      'favorite': () => (target.userState.isFavorite = true)
     };
   }
 
@@ -106,7 +126,8 @@ export default class FilmDetalis extends Component {
     const entry = {
       userRating: ``,
       userComments: ``,
-      userEmoji: ``
+      userEmoji: ``,
+      userState: {}
     };
 
     const filmDetalisMapper = this._createMapper(entry);
@@ -119,14 +140,6 @@ export default class FilmDetalis extends Component {
     }
 
     return entry;
-  }
-
-  _onEmojiClick() {
-    if (event.target.classList.contains(`film-details__emoji-item`)) {
-      const emoji = event.target.getAttribute(`value`);
-      document.querySelector(`.film-details__add-emoji-label`).textContent = Emoji[emoji];
-    }
-    document.querySelector(`#add-emoji`).checked = false;
   }
 
   get template() {
@@ -195,13 +208,13 @@ export default class FilmDetalis extends Component {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._userState.isWatchlist ? `checked` : ``}>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" checked>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._userState.isWatched ? `checked` : ``}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden"  id="favorite" name="favorite">
+          <input type="checkbox" class="film-details__control-input visually-hidden"  id="favorite" name="favorite" ${this._userState.isFavorite ? `checked` : ``}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
 
@@ -236,7 +249,7 @@ export default class FilmDetalis extends Component {
 
       <section class="film-details__user-rating-wrap">
         <div class="film-details__user-rating-controls">
-          <span class="film-details__watched-status film-details__watched-status--active">Already watched</span>
+          <span class="film-details__watched-status ${this._userState.isWatched ? `film-details__watched-status--active` : ``}">Already watched</span>
           <button class="film-details__watched-reset" type="button">undo</button>
         </div>
 
@@ -291,6 +304,8 @@ export default class FilmDetalis extends Component {
     this._element.querySelector(`.film-details__user-rating-score`).addEventListener(`click`, this._onUserRatingClick);
     this._element.querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._onEmojiClick);
     this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onCommentKeydown);
+    this._element.querySelector(`.film-details__watched-reset`).addEventListener(`click`, this._onWatchedResetButtonClick);
+    this._element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._onWatchedButtonClick);
   }
 
   unbind() {
@@ -298,10 +313,13 @@ export default class FilmDetalis extends Component {
     this._element.querySelector(`.film-details__user-rating-score`).removeEventListener(`click`, this._onUserRatingClick);
     this._element.querySelector(`.film-details__emoji-list`).removeEventListener(`click`, this._onEmojiClick);
     this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onCommentKeydown);
+    this._element.querySelector(`.film-details__watched-reset`).removeEventListener(`click`, this._onWatchedResetButtonClick);
+    this._element.querySelector(`.film-details__control-label--watched`).removeEventListener(`click`, this._onWatchedButtonClick);
   }
 
   update(data) {
     this._userRating = data.userRating;
+    this._userState = data.userState;
     if (data.userComments !== ``) {
       this._userComments.push(data.userComments);
       this._userEmoji.push(data.userEmoji);
