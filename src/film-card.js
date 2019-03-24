@@ -20,10 +20,6 @@ export default class FilmCard extends Component {
     this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
   }
 
-  _getGenre() {
-    return [...this._genre][Math.floor(Math.random() * 5)];
-  }
-
   _onCommentButtonClick() {
     this._onClick();
   }
@@ -54,7 +50,7 @@ export default class FilmCard extends Component {
       <p class="film-card__info">
         <span class="film-card__year">${moment(this._timeStamp).format(`Y`)}</span>
         <span class="film-card__duration">${moment.duration(this._runtime, `seconds`).hours()}h ${moment.duration(this._runtime, `seconds`).minutes()}m</span>
-        <span class="film-card__genre">${this._getGenre()}</span>
+        <span class="film-card__genre">${this._genre[0]}</span>
       </p>
       <img src="${this._image}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>

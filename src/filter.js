@@ -10,6 +10,7 @@ export default class Filter extends Component {
     this._additional = data.additional;
 
     this._onFilter = this._onFilter.bind(this);
+    this._onOpenStats = this._onOpenStats.bind(this);
   }
 
   get template() {
@@ -18,18 +19,30 @@ export default class Filter extends Component {
   }
 
   _onFilter() {}
+  _onOpenStats() {}
 
   set onFilter(func) {
     if (typeof func === `function`) {
       this._onFilter = func;
     }
   }
+  set onOpenStats(func) {
+    if (typeof func === `function`) {
+      this._onOpenStats = func;
+    }
+  }
 
   bind() {
     this._element.addEventListener(`click`, this._onFilter);
+    if (this._additional) {
+      this._element.addEventListener(`click`, this._onOpenStats);
+    }
   }
 
   unbind() {
     this._element.removeEventListener(`click`, this._onFilter);
+    if (this._additional) {
+      this._element.addEventListener(`click`, this._onOpenStats);
+    }
   }
 }

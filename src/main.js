@@ -3,15 +3,25 @@ import FilmCard from '../src/film-card.js';
 import FilmDetalis from '../src/film-detalis.js';
 import getCardData from '../src/get-card-data.js';
 import getFilterData from '../src/get-filter-data.js';
+import Statistic from '../src/statistic.js';
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
 const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
+const main = document.querySelector(`main`);
 
 const createFilterMarkdown = (allFilters) => {
   const fragment = document.createDocumentFragment();
   for (const filter of allFilters) {
     const newFilter = new Filter(filter);
 
+    newFilter.onOpenStats = () => {
+      const newStatistic = new Statistic(allCards);
+      const renderStatistic = newStatistic.render();
+      newStatistic.setData();
+      main.appendChild(renderStatistic);
+      document.querySelector(`.films`).classList.add(`visually-hidden`);
+      document.querySelector(`.statistic`).classList.remove(`visually-hidden`);
+    };
     newFilter.onFilter = () => {
       mainFilmsLabel.innerHTML = ``;
 

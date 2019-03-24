@@ -34,9 +34,6 @@ export default class FilmDetalis extends Component {
     this._onWatchedButtonClick = this._onWatchedButtonClick.bind(this);
   }
 
-  _getGenre() {
-    return [...this._genre][Math.floor(Math.random() * 5)];
-  }
   _getUserComments() {
     const allUserComents = this._userComments.map((el, i) => {
       const template = `<li class="film-details__comment">
@@ -195,9 +192,9 @@ export default class FilmDetalis extends Component {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                <span class="film-details__genre">${this._getGenre()}</span>
-                <span class="film-details__genre">${this._getGenre()}</span>
-                <span class="film-details__genre">${this._getGenre()}</span></td>
+                <span class="film-details__genre">${this._genre[0]}</span>
+                <span class="film-details__genre">${this._genre[1]}</span>
+                <span class="film-details__genre">${this._genre[2]}</span></td>
               </tr>
             </table>
 
