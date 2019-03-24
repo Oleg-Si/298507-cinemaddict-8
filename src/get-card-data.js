@@ -1,4 +1,13 @@
 import getRandomInt from '../src/get-random-integer.js';
+import getRandomArrayElements from '../src/get-random-array-element.js';
+
+const genre = new Set([
+  `Horror`,
+  `Comedy`,
+  `Action`,
+  `Adventure`,
+  `Documentary`
+]);
 
 export default () => ({
   image: `//picsum.photos/230/340?r=${Math.random()}`,
@@ -7,15 +16,14 @@ export default () => ({
   rating: `${getRandomInt(0, 9)}.${getRandomInt(0, 9)}`,
   timeStamp: getRandomInt(1262293200000, 1552915226386),
   runtime: getRandomInt(1800, 7800),
-  genre: new Set([
-    `Horror`,
-    `Comedy`,
-    `Action`,
-    `Adventure`,
-    `Documentary`
-  ]),
+  genre: getRandomArrayElements(genre, 3),
   userRating: `5`,
   userComments: [`So long-long story, boring!`],
   userCommentsDate: [`1552921169576`],
-  userEmoji: [`neutral-face`]
+  userEmoji: [`neutral-face`],
+  userState: {
+    'isWatchlist': false,
+    'isFavorite': false,
+    'isWatched': false
+  }
 });

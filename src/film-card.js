@@ -12,16 +12,35 @@ export default class FilmCard extends Component {
     this._runtime = data.runtime;
     this._genre = data.genre;
     this._userComments = data.userComments;
+    this._userState = data.userState;
 
     this._onCommentButtonClick = this._onCommentButtonClick.bind(this);
-  }
-
-  _getGenre() {
-    return [...this._genre][Math.floor(Math.random() * 5)];
+    this._onAddToWatchList = this._onAddToWatchList.bind(this);
+    this._onAddToFavorites = this._onAddToFavorites.bind(this);
+    this._onMarkAsWatched = this._onMarkAsWatched.bind(this);
   }
 
   _onCommentButtonClick() {
     this._onClick();
+  }
+  _onAddToWatchList() {}
+  _onAddToFavorites() {}
+  _onMarkAsWatched() {}
+
+  set onAddToWatchList(func) {
+    if (typeof func === `function`) {
+      this._onAddToWatchList = func;
+    }
+  }
+  set onAddToFavorites(func) {
+    if (typeof func === `function`) {
+      this._onAddToFavorites = func;
+    }
+  }
+  set onMarkAsWatched(func) {
+    if (typeof func === `function`) {
+      this._onMarkAsWatched = func;
+    }
   }
 
   get template() {
@@ -31,7 +50,7 @@ export default class FilmCard extends Component {
       <p class="film-card__info">
         <span class="film-card__year">${moment(this._timeStamp).format(`Y`)}</span>
         <span class="film-card__duration">${moment.duration(this._runtime, `seconds`).hours()}h ${moment.duration(this._runtime, `seconds`).minutes()}m</span>
-        <span class="film-card__genre">${this._getGenre()}</span>
+        <span class="film-card__genre">${this._genre[0]}</span>
       </p>
       <img src="${this._image}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
@@ -47,9 +66,15 @@ export default class FilmCard extends Component {
 
   bind() {
     this._element.querySelector(`.film-card__comments`).addEventListener(`click`, this._onCommentButtonClick);
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchList);
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatched);
+    this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onAddToFavorites);
   }
 
   unbind() {
     this._element.querySelector(`.film-card__comments`).removeEventListener(`click`, this._onCommentButtonClick);
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).removeEventListener(`click`, this._onAddToWatchList);
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).removeEventListener(`click`, this._onMarkAsWatched);
+    this._element.querySelector(`.film-card__controls-item--favorite`).removeEventListener(`click`, this._onAddToFavorites);
   }
 }

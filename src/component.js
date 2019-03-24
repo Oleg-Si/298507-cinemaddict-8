@@ -8,6 +8,7 @@ export default class Component {
 
     this._element = null;
     this._onClick = null;
+    this._userState = null;
   }
 
   get element() {
