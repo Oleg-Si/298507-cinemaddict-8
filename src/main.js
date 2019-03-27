@@ -1,29 +1,51 @@
 import Filter from '../src/filter.js';
+import FilterStatistic from '../src/filter-statistic.js';
 import FilmCard from '../src/film-card.js';
 import FilmDetalis from '../src/film-detalis.js';
 import getCardData from '../src/get-card-data.js';
 import getFilterData from '../src/get-filter-data.js';
+import getFilterStatisticData from '../src/get-filter-statistic-data.js';
 import Statistic from '../src/statistic.js';
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
 const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
 const main = document.querySelector(`main`);
 
+const createCards = (count) => {
+  const allCard = [];
+  for (let i = 0; i < count; i++) {
+    allCard.push(getCardData());
+  }
+  return allCard;
+};
+const allCards = createCards(7);
+
+const clearFilterCheckedStatus = () => {
+  const allFilter = document.querySelectorAll(`.main-navigation__item`);
+  for (const filter of allFilter) {
+    filter.classList.remove(`main-navigation__item--active`);
+  }
+};
+const getUserStatisticData = () => {
+  const userWatchedCard = allCards.filter((el) => el.userState.isWatched);
+
+  return userWatchedCard;
+};
+
 const createFilterMarkdown = (allFilters) => {
   const fragment = document.createDocumentFragment();
   for (const filter of allFilters) {
     const newFilter = new Filter(filter);
 
-    newFilter.onOpenStats = () => {
-      const newStatistic = new Statistic(allCards);
-      const renderStatistic = newStatistic.render();
-      newStatistic.setData();
-      main.appendChild(renderStatistic);
-      document.querySelector(`.films`).classList.add(`visually-hidden`);
-      document.querySelector(`.statistic`).classList.remove(`visually-hidden`);
-    };
-    newFilter.onFilter = () => {
+    newFilter.onClick = () => {
+
+      if (document.querySelector(`.statistic`)) {
+        document.querySelector(`.films`).classList.remove(`visually-hidden`);
+        document.querySelector(`.statistic`).classList.add(`visually-hidden`);
+      }
+
       mainFilmsLabel.innerHTML = ``;
+      clearFilterCheckedStatus();
 
       const cardsWatchlist = [];
       const cardsHistory = [];
@@ -61,16 +83,42 @@ const createFilterMarkdown = (allFilters) => {
   return fragment;
 };
 
-mainNavigationField.appendChild(createFilterMarkdown(getFilterData()));
+const createFilterStatisticMarkdown = (allFilters) => {
+  const fragment = document.createDocumentFragment();
+  for (const filter of allFilters) {
+    const newFilterStatistic = new FilterStatistic(filter);
+    let newStatistic = null;
 
-const createCards = (count) => {
-  const allCard = [];
-  for (let i = 0; i < count; i++) {
-    allCard.push(getCardData());
+    newFilterStatistic.onClick = () => {
+      clearFilterCheckedStatus();
+      if (newStatistic === null) {
+        newStatistic = new Statistic(getUserStatisticData());
+      }
+
+      const oldStatistic = newStatistic.element;
+
+      if (!oldStatistic) {
+        main.appendChild(newStatistic.render());
+      } else {
+        newStatistic.unrender();
+        newStatistic.update(getUserStatisticData());
+        main.replaceChild(newStatistic.render(), oldStatistic);
+      }
+
+      document.querySelector(`.films`).classList.add(`visually-hidden`);
+      document.querySelector(`.statistic`).classList.remove(`visually-hidden`);
+
+      newStatistic.setData();
+    };
+
+    fragment.appendChild(newFilterStatistic.render());
   }
-  return allCard;
+
+  return fragment;
 };
-const allCards = createCards(7);
+
+mainNavigationField.appendChild(createFilterMarkdown(getFilterData()));
+mainNavigationField.appendChild(createFilterStatisticMarkdown(getFilterStatisticData()));
 
 const body = document.querySelector(`body`);
 
