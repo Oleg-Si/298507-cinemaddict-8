@@ -11,17 +11,15 @@ export default class Statistic extends Component {
     this._genre = [];
     this._count = [];
     this._runtime = 0;
-    this._watched = 0;
+    this._watched = data.length;
 
     const allGenre = [];
 
     data.forEach((el) => {
       this._uniqueGenre.add(el.genre[0]);
       allGenre.push(el.genre[0]);
+
       this._runtime = this._runtime + el.runtime;
-      if (el.userState.isWatched) {
-        this._watched++;
-      }
     });
 
     Array.from(this._uniqueGenre).forEach((el) => {
@@ -39,7 +37,7 @@ export default class Statistic extends Component {
     return `<section class="statistic visually-hidden">
       <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
 
-      <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters visually-hidden">
+      <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
         <p class="statistic__filters-description">Show stats:</p>
 
         <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
@@ -65,7 +63,7 @@ export default class Statistic extends Component {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${moment.duration(this._runtime, `minutes`).hours()} <span class="statistic__item-description">h</span> ${moment.duration(this._runtime, `minutes`).minutes()} <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${moment.duration(this._runtime, `seconds`).hours()} <span class="statistic__item-description">h</span> ${moment.duration(this._runtime, `seconds`).minutes()} <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
@@ -84,7 +82,7 @@ export default class Statistic extends Component {
     const statisticCtx = this._element.querySelector(`.statistic__chart`);
     const BAR_HEIGHT = 50;
     statisticCtx.height = BAR_HEIGHT * 5;
-    const myChart = new Chart(statisticCtx, {
+    const _myChart = new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
@@ -140,6 +138,34 @@ export default class Statistic extends Component {
         }
       }
     });
-    myChart.type = `horizontalBar`;
+    return _myChart;
+  }
+
+  update(newData) {
+    this._uniqueGenre = new Set();
+    this._topGenre = ``;
+    this._genre = [];
+    this._count = [];
+    this._runtime = 0;
+    this._watched = newData.length;
+
+    const allGenre = [];
+
+    newData.forEach((el) => {
+      this._uniqueGenre.add(el.genre[0]);
+      allGenre.push(el.genre[0]);
+
+      this._runtime = this._runtime + el.runtime;
+    });
+
+    Array.from(this._uniqueGenre).forEach((el) => {
+      const count = allGenre.filter((element) => element === el).length;
+
+      this._genre.push(el);
+      this._count.push(count);
+    });
+
+    const indexTopGenre = this._count.indexOf(Math.max(...this._count));
+    this._topGenre = this._genre[indexTopGenre];
   }
 }
