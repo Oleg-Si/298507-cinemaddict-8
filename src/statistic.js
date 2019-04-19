@@ -16,8 +16,8 @@ export default class Statistic extends Component {
     const allGenre = [];
 
     data.forEach((el) => {
-      this._uniqueGenre.add(el.genre[0]);
-      allGenre.push(el.genre[0]);
+      this._uniqueGenre.add(el.genre.length ? el.genre[0] : `no genre`);
+      allGenre.push(el.genre.length ? el.genre[0] : `no genre`);
 
       this._runtime = this._runtime + el.runtime;
     });
@@ -63,7 +63,7 @@ export default class Statistic extends Component {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${moment.duration(this._runtime, `seconds`).hours()} <span class="statistic__item-description">h</span> ${moment.duration(this._runtime, `seconds`).minutes()} <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${moment.duration(this._runtime, `minutes`).days()}<span class="statistic__item-description">d</span> ${moment.duration(this._runtime, `minutes`).hours()} <span class="statistic__item-description">h</span> ${moment.duration(this._runtime, `minutes`).minutes()} <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>

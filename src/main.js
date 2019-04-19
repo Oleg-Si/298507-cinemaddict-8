@@ -6,19 +6,15 @@ import getCardData from '../src/get-card-data.js';
 import getFilterData from '../src/get-filter-data.js';
 import getFilterStatisticData from '../src/get-filter-statistic-data.js';
 import Statistic from '../src/statistic.js';
+import API from '../src/api.js';
+
+const AUTHORIZATION = `Basic Olegoon_s1`;
+const BASE_URL = `https://es8-demo-srv.appspot.com/moowle`;
 
 const mainNavigationField = document.querySelector(`.main-navigation`);
 const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
 const main = document.querySelector(`main`);
-
-const createCards = (count) => {
-  const allCard = [];
-  for (let i = 0; i < count; i++) {
-    allCard.push(getCardData());
-  }
-  return allCard;
-};
-const allCards = createCards(7);
+const body = document.querySelector(`body`);
 
 const clearFilterCheckedStatus = () => {
   const allFilter = document.querySelectorAll(`.main-navigation__item`);
@@ -82,7 +78,6 @@ const createFilterMarkdown = (allFilters) => {
 
   return fragment;
 };
-
 const createFilterStatisticMarkdown = (allFilters) => {
   const fragment = document.createDocumentFragment();
   for (const filter of allFilters) {
@@ -120,8 +115,6 @@ const createFilterStatisticMarkdown = (allFilters) => {
 mainNavigationField.appendChild(createFilterMarkdown(getFilterData()));
 mainNavigationField.appendChild(createFilterStatisticMarkdown(getFilterStatisticData()));
 
-const body = document.querySelector(`body`);
-
 const createFilmMarkdown = (data) => {
   const fragment = document.createDocumentFragment();
   for (const card of data) {
@@ -148,22 +141,54 @@ const createFilmMarkdown = (data) => {
       newFilmDetalis.unrender();
     };
     newFilmDetalis.onUserRatingChange = (newData) => {
+
+      //console.log(card);
+     // console.log('--------------');
+     // console.log(newData);
+
+
       Object.assign(card, newData);
       newFilmDetalis.update(card);
 
-      let oldFilmCard = newFilm.element;
-      newFilm.unrender();
-      newFilm.render();
-      mainFilmsLabel.replaceChild(newFilm.element, oldFilmCard);
-      oldFilmCard = null;
+
+
+      api.updateFilm({id: card.id, data: card.toRAW()})
+        .then((newTask) => {
+
+        let oldFilmDetalis = newFilmDetalis.element;
+
+        newFilmDetalis.unrender();
+        newFilmDetalis.render();
+
+          body.replaceChild(newFilmDetalis.element, oldFilmDetalis);
+          oldFilmDetalis = null;
+      });
+      /*
+
+
+
 
       body.removeChild(newFilmDetalis.element);
       newFilmDetalis.unrender();
+      */
     };
     newFilmDetalis.onUserCommentSend = (newData) => {
       Object.assign(card, newData);
-      newFilmDetalis.update(card);
 
+      api.updateFilm({id: card.id, data: card.toRAW()})
+        .then((newTask) => {
+          newFilmDetalis.update(card);
+
+        let oldFilmDetalis = newFilmDetalis.element;
+          newFilmDetalis.unrender();
+          newFilmDetalis.render();
+        body.appendChild(newFilmDetalis.element);
+        //body.replaceChild(newFilmDetalis.element, oldFilmDetalis);
+        oldFilmDetalis = null;
+
+      });
+
+      /*
       let oldFilmCard = newFilm.element;
       newFilm.unrender();
       newFilm.render();
@@ -172,6 +197,7 @@ const createFilmMarkdown = (data) => {
 
       body.removeChild(newFilmDetalis.element);
       newFilmDetalis.unrender();
+      */
     };
 
     fragment.appendChild(newFilm.render());
@@ -180,7 +206,21 @@ const createFilmMarkdown = (data) => {
   return fragment;
 };
 
-mainFilmsLabel.appendChild(createFilmMarkdown(allCards));
+const api = new API(BASE_URL, AUTHORIZATION);
+const allCards = [];
+api.getFilms()
+  .then((tasks) => {
+    tasks.map((el) => allCards.push(el));
+    mainFilmsLabel.appendChild(createFilmMarkdown(allCards))
+  })
+
+const createCards = (count) => {
+  const allCard = [];
+  for (let i = 0; i < count; i++) {
+    allCard.push(getCardData());
+  }
+  return allCard;
+};
 
 const extraFilmsLabels = document.querySelectorAll(`.films-list--extra .films-list__container`);
 extraFilmsLabels.forEach((el) => {

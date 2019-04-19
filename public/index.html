@@ -13,95 +13,14 @@
 
 <header class="header">
   <h1 class="header__logo logo">Moowle</h1>
-  <form class="header__search search">
-    <input type="text" name="search" class="search__field" placeholder="Search">
-    <button type="submit" class="visually-hidden">Search</button>
-  </form>
   <section class="header__profile profile">
     <p class="profile__rating">Show adept</p>
   </section>
 </header>
 
 <main class="main">
-  <nav class="main-navigation"></nav>
 
-  <section class="films">
-    <section class="films-list">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-
-      <div class="films-list__container"></div>
-
-      <button class="films-list__show-more">Show more</button>
-    </section>
-
-    <section class="films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
-
-      <div class="films-list__container">
-        <article class="film-card film-card--no-controls">
-          <h3 class="film-card__title">Incredibles 2</h3>
-          <p class="film-card__rating">9.8</p>
-          <p class="film-card__info">
-            <span class="film-card__year">2018</span>
-            <span class="film-card__duration">1h&nbsp;13m</span>
-            <span class="film-card__genre">Comedy</span>
-          </p>
-          <img src="./images/posters/fuga-da-new-york.jpg" alt="" class="film-card__poster">
-          <button class="film-card__comments">13 comments</button>
-        </article>
-
-        <article class="film-card film-card--no-controls">
-          <h3 class="film-card__title">Incredibles 2</h3>
-          <p class="film-card__rating">9.8</p>
-          <p class="film-card__info">
-            <span class="film-card__year">2018</span>
-            <span class="film-card__duration">1h&nbsp;13m</span>
-            <span class="film-card__genre">Comedy</span>
-          </p>
-          <img src="./images/posters/blue-blazes.jpg" alt="" class="film-card__poster">
-
-          <button class="film-card__comments">13 comments</button>
-        </article>
-      </div>
-    </section>
-
-    <section class="films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-
-      <div class="films-list__container">
-        <article class="film-card film-card--no-controls">
-          <h3 class="film-card__title">Incredibles 2</h3>
-          <p class="film-card__rating">9.8</p>
-          <p class="film-card__info">
-            <span class="film-card__year">2018</span>
-            <span class="film-card__duration">1h&nbsp;13m</span>
-            <span class="film-card__genre">Comedy</span>
-          </p>
-
-          <img src="./images/posters/accused.jpg" alt="Accused" class="film-card__poster">
-
-          <button class="film-card__comments">13 comments</button>
-        </article>
-
-        <article class="film-card film-card--no-controls">
-          <h3 class="film-card__title">Incredibles 2</h3>
-          <p class="film-card__rating">9.8</p>
-
-          <p class="film-card__info">
-            <span class="film-card__year">2018</span>
-            <span class="film-card__duration">1h&nbsp;13m</span>
-            <span class="film-card__genre">Comedy</span>
-          </p>
-
-          <img src="./images/posters/blackmail.jpg" alt="" class="film-card__poster">
-
-          <button class="film-card__comments">13 comments</button>
-        </article>
-      </div>
-    </section>
-  </section>
 </main>
-
 
 <footer class="footer">
   <section class="footer__logo logo logo--smaller">Moowle</section>
@@ -111,5 +30,16 @@
 </footer>
 
 <script src="bundle.js"></script>
+
+<script>
+  navigator.serviceWorker.register('service-worker.js')
+    .then(function(reg) {
+    console.log('Registration succeeded. Scope is ' + reg.scope);
+  })
+    .catch(function(error) {
+    console.log('Registration failed with ' + error);
+  });
+</script>
+
 </body>
 </html>
