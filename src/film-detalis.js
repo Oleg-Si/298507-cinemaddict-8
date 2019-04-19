@@ -1,4 +1,5 @@
 import Component from '../src/component.js';
+import getRandomInt from '../src/get-random-integer.js';
 import moment from 'moment';
 
 const Emoji = {
@@ -7,9 +8,27 @@ const Emoji = {
   'grinning': `😀`
 };
 
+
+const KeyCode = {
+  ESC: 27,
+  ENTER: 13
+};
+const CommentBorderSetting = {
+  ERROR: `3px solid #8B0000`,
+  DEFAULT: `1px solid #979797`
+};
+const RatingElementColor = {
+  DEFAULT: `#d8d8d8`,
+  ERROR: `#8B0000`,
+  CHECKED: `#ffe800`
+};
+
+const userNames = ['User1', 'User2', 'User3', 'User4', 'User5'];
+
 export default class FilmDetalis extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._image = data.image;
     this._title = data.title;
     this._description = data.description;
@@ -18,11 +37,16 @@ export default class FilmDetalis extends Component {
     this._timeStamp = data.timeStamp;
     this._runtime = data.runtime;
     this._genre = data.genre;
-    this._userRating = data.userRating;
+    this._userRating = parseFloat(data.userRating);
     this._userComments = data.userComments;
     this._userEmoji = data.userEmoji;
-    this._userCommentsDate = data.userCommentsDate;
     this._userState = data.userState;
+    this._ageRating = data.ageRating;
+    this._actors = data.actors;
+    this._writers = data.writers;
+    this._director = data.director;
+    this._alternativeTitle = data.alternativeTitle;
+    this._releaseCountry = data.releaseCountry;
 
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onUserRatingChange = this._onUserRatingChange.bind(this);
@@ -37,12 +61,12 @@ export default class FilmDetalis extends Component {
   _getUserComments() {
     const allUserComents = this._userComments.map((el, i) => {
       const template = `<li class="film-details__comment">
-        <span class="film-details__comment-emoji">${Emoji[this._userEmoji[i]]}</span>
+        <span class="film-details__comment-emoji">${Emoji[el.emotion]}</span>
         <div>
-        <p class="film-details__comment-text">${el}</p>
+        <p class="film-details__comment-text">${el.comment}</p>
         <p class="film-details__comment-info">
-        <span class="film-details__comment-author">Tim Macoveev</span>
-        <span class="film-details__comment-day">${moment(parseInt(this._userCommentsDate[i], 10)).fromNow()}</span>
+        <span class="film-details__comment-author">${el.author}</span>
+        <span class="film-details__comment-day">${moment(el.date).fromNow()}</span>
         </p>
         </div>
       </li>`;
@@ -52,6 +76,16 @@ export default class FilmDetalis extends Component {
     });
 
     return allUserComents.join(``);
+  }
+  _getGenre() {
+    const allGenre = this._genre.map((el, i) => {
+      const template = `<span class="film-details__genre">${el}</span>`;
+      el = template;
+
+      return el;
+    });
+
+    return allGenre.join(``);
   }
 
   _onCloseButtonClick() {
@@ -79,7 +113,10 @@ export default class FilmDetalis extends Component {
   _getNewData() {
     const formData = new FormData(this._element.querySelector(`form.film-details__inner`));
     const newData = this._processForm(formData);
-    newData.userCommentsDate = (moment().valueOf());
+    newData.userComments.date = (moment().valueOf());
+
+    this._userComments.push(newData.userComments)
+    newData.userComments = this._userComments;
 
     return newData;
   }
@@ -93,6 +130,7 @@ export default class FilmDetalis extends Component {
   _onUserRatingClick(event) {
     if (event.target.classList.contains(`film-details__user-rating-input`)) {
       const newData = this._getNewData();
+      //newData.userComments = this._userComments.push(newData.userComments);
       this._onUserRatingChange(newData);
     }
   }
@@ -111,8 +149,8 @@ export default class FilmDetalis extends Component {
   _createMapper(target) {
     return {
       'score': (value) => (target.userRating = value),
-      'comment': (value) => (target.userComments = value),
-      'comment-emoji': (value) => (target.userEmoji = value),
+      'comment': (value) => (target.userComments.comment = value),
+      'comment-emoji': (value) => (target.userComments.emotion = value),
       'watchlist': () => (target.userState.isWatchlist = true),
       'watched': () => (target.userState.isWatched = true),
       'favorite': () => (target.userState.isFavorite = true)
@@ -122,8 +160,12 @@ export default class FilmDetalis extends Component {
   _processForm(data) {
     const entry = {
       userRating: ``,
-      userComments: ``,
-      userEmoji: ``,
+      userComments: {
+        'author': userNames[getRandomInt(0, userNames.length)],
+        'comment': ``,
+        'date': ``,
+        'emotion': ``
+      },
       userState: {}
     };
 
@@ -140,22 +182,22 @@ export default class FilmDetalis extends Component {
   }
 
   get template() {
-    return `<section class="film-details">
-      <form class="film-details__inner" action="" method="get">
+    return `<section class="film-details" id="${this._id}">
+      <form class="film-details__inner" action="" method="get" data-id="${this._id}">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="${this._image}" alt="incredables-2">
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${this._ageRating}+</p>
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${this._title}</h3>
-                <p class="film-details__title-original">Original: Невероятная семейка</p>
+                <p class="film-details__title-original">Original: ${this._alternativeTitle}</p>
               </div>
 
               <div class="film-details__rating">
@@ -167,34 +209,33 @@ export default class FilmDetalis extends Component {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Brad Bird</td>
+                <td class="film-details__cell">${this._director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Brad Bird</td>
+                <td class="film-details__cell">${this._writers.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Samuel L. Jackson, Catherine Keener, Sophia Bush</td>
+                <td class="film-details__cell">${this._actors.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${moment(this._timeStamp).format(`d MMMM Y`)} (USA)</td>
+                <td class="film-details__cell">${moment(this._timeStamp).format(`d MMMM Y`)} (${this._releaseCountry})</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${Math.floor(moment.duration(this._runtime, `seconds`).asMinutes())} min</td>
+                <td class="film-details__cell">${Math.floor(moment.duration(this._runtime, `minutes`).asMinutes())} min</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${this._releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                <span class="film-details__genre">${this._genre[0]}</span>
-                <span class="film-details__genre">${this._genre[1]}</span>
-                <span class="film-details__genre">${this._genre[2]}</span></td>
+                  ${this._genre.length ? this._getGenre() : `<span class="film-details__genre">no genre</span>`}
+                </td>
               </tr>
             </table>
 
@@ -261,31 +302,31 @@ export default class FilmDetalis extends Component {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._userRating === `1` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._userRating < 2 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._userRating === `2` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._userRating >= 2 && this._userRating < 3 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-2">2</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3"${this._userRating === `3` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3"${this._userRating >= 3 && this._userRating < 4 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-3">3</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4"${this._userRating === `4` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4"${this._userRating >= 4 && this._userRating < 5 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-4">4</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._userRating === `5` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._userRating >= 5 && this._userRating < 6 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-5">5</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6"${this._userRating === `6` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6"${this._userRating >= 6 && this._userRating < 7 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-6">6</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7"${this._userRating === `7` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7"${this._userRating >= 7 && this._userRating < 8 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-7">7</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8"${this._userRating === `8` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8"${this._userRating >= 8 && this._userRating < 9 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-8">8</label>
 
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9"${this._userRating === `9` ? `checked` : ``}>
+              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9"${this._userRating >= 9 ? `checked` : ``}>
               <label class="film-details__user-rating-label" for="rating-9">9</label>
 
             </div>
@@ -317,10 +358,6 @@ export default class FilmDetalis extends Component {
   update(data) {
     this._userRating = data.userRating;
     this._userState = data.userState;
-    if (data.userComments !== ``) {
-      this._userComments.push(data.userComments);
-      this._userEmoji.push(data.userEmoji);
-      this._userCommentsDate.push(data.userCommentsDate);
-    }
+    this._userComments.push(data.userComments);
   }
 }

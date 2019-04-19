@@ -4,6 +4,7 @@ import moment from 'moment';
 export default class FilmCard extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._image = data.image;
     this._title = data.title;
     this._description = data.description;
@@ -44,13 +45,13 @@ export default class FilmCard extends Component {
   }
 
   get template() {
-    return `<article class="film-card">
+    return `<article class="film-card" id="${this._id}">
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${moment(this._timeStamp).format(`Y`)}</span>
-        <span class="film-card__duration">${moment.duration(this._runtime, `seconds`).hours()}h ${moment.duration(this._runtime, `seconds`).minutes()}m</span>
-        <span class="film-card__genre">${this._genre[0]}</span>
+        <span class="film-card__duration">${moment.duration(this._runtime, `minutes`).hours()}h ${moment.duration(this._runtime, `minutes`).minutes()}m</span>
+        <span class="film-card__genre">${this._genre.length ? this._genre[0] : `no genre`}</span>
       </p>
       <img src="${this._image}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
