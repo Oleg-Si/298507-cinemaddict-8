@@ -1,49 +1,53 @@
-import Adapter from '../src/data-adapter.js';
+import CardModel from '../models/card-model';
 
 const URL = `movies`;
-const SYNC_URL = `movies/sync`;
+const SYNCHRONIZATION_URL = `movies/sync`;
+const CONTENT_TYPE = `application/json`;
+
+const ResponseStatus = {
+  MIN: 200,
+  MAX: 300
+};
 
 const Method = {
   GET: `GET`,
-  POST: `POST`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`
 };
 
-const toJSON = (response) => response.json();
+const convertToJson = (response) => response.json();
 
 export default class API {
-  constructor(baseUrl, authorization) {
+  constructor({baseUrl, authorization}) {
     this._baseUrl = baseUrl;
     this._authorization = authorization;
   }
 
   getData() {
-    return this._load({
-      url: URL
-    })
-      .then(toJSON)
-      .then(Adapter.parseData);
+    return this._load({url: URL})
+      .then(convertToJson)
+      .then(CardModel.parseData);
   }
 
-  updateData({id, data}) {
+  updateData({id, newData}) {
     return this._load({
       url: `${URL}/${id}`,
       method: Method.PUT,
-      body: JSON.stringify(data),
-      headers: new Headers({'Content-Type': `application/json`})
+      body: JSON.stringify(newData),
+      headers: new Headers({'Content-Type': CONTENT_TYPE})
     })
-      .then(toJSON)
-      .then(Adapter.parseDataItem);
+      .then(convertToJson)
+      .then(CardModel.parseDatum);
   }
 
   syncData({data}) {
     return this._load({
-      url: SYNC_URL,
+      url: SYNCHRONIZATION_URL,
       method: Method.POST,
       body: JSON.stringify(data),
-      headers: new Headers({'Content-Type': `application/json`})
+      headers: new Headers({'Content-Type': CONTENT_TYPE})
     })
-      .then(toJSON);
+      .then(convertToJson);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
@@ -57,7 +61,7 @@ export default class API {
   }
 
   static checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status >= ResponseStatus.MIN && response.status < ResponseStatus.MAX) {
       return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);

@@ -1,228 +1,142 @@
-import Filter from '../src/filter.js';
-import FilterStatistic from '../src/filter-statistic.js';
-import FilmCard from '../src/film-card.js';
-import FilmDetalis from '../src/film-detalis.js';
-import getCardData from '../src/get-card-data.js';
-import getFilterData from '../src/get-filter-data.js';
-import getFilterStatisticData from '../src/get-filter-statistic-data.js';
-import Statistic from '../src/statistic.js';
-import API from '../src/api.js';
+import {getFilteredCards, setFiltersCounts} from './lib/filters';
+import {setUserRank} from './lib/user-rank';
+import FILTER_DATA from './data/filter';
+import FiltersComponent from './components/filters';
+import CardsSectionsComponent from './components/cards-sections';
+import StatisticsComponent from './components/statistics';
+import SearchComponent from './components/search';
+import LoadInProcessComponent from './components/load-in-process';
+import LoadErrorComponent from './components/load-error';
+import API from './services/api';
+import CardModel from './models/card-model';
+import Provider from './services/provider';
+import Store from './services/store';
 
-const AUTHORIZATION = `Basic Olegoon_s1`;
-const BASE_URL = `https://es8-demo-srv.appspot.com/moowle`;
-
-const mainNavigationField = document.querySelector(`.main-navigation`);
-const mainFilmsLabel = document.querySelector(`.films-list .films-list__container`);
-const main = document.querySelector(`main`);
-const body = document.querySelector(`body`);
-
-const clearFilterCheckedStatus = () => {
-  const allFilter = document.querySelectorAll(`.main-navigation__item`);
-  for (const filter of allFilter) {
-    filter.classList.remove(`main-navigation__item--active`);
-  }
-};
-const getUserStatisticData = () => {
-  const userWatchedCard = allCards.filter((el) => el.userState.isWatched);
-
-  return userWatchedCard;
-};
-
-const createFilterMarkdown = (allFilters) => {
-  const fragment = document.createDocumentFragment();
-  for (const filter of allFilters) {
-    const newFilter = new Filter(filter);
-
-    newFilter.onClick = () => {
-
-      if (document.querySelector(`.statistic`)) {
-        document.querySelector(`.films`).classList.remove(`visually-hidden`);
-        document.querySelector(`.statistic`).classList.add(`visually-hidden`);
-      }
-
-      mainFilmsLabel.innerHTML = ``;
-      clearFilterCheckedStatus();
-
-      const cardsWatchlist = [];
-      const cardsHistory = [];
-      const cardsFavorites = [];
-
-      for (const card of allCards) {
-        if (card.userState.isWatchlist) {
-          cardsWatchlist.push(card);
-        }
-        if (card.userState.isWatched) {
-          cardsHistory.push(card);
-        }
-        if (card.userState.isFavorite) {
-          cardsFavorites.push(card);
-        }
-      }
-
-      if (filter.name === `All movies`) {
-        mainFilmsLabel.appendChild(createFilmMarkdown(allCards));
-      }
-      if (filter.name === `Watchlist`) {
-        mainFilmsLabel.appendChild(createFilmMarkdown(cardsWatchlist));
-      }
-      if (filter.name === `Favorites`) {
-        mainFilmsLabel.appendChild(createFilmMarkdown(cardsFavorites));
-      }
-      if (filter.name === `History`) {
-        mainFilmsLabel.appendChild(createFilmMarkdown(cardsHistory));
-      }
-    };
-
-    fragment.appendChild(newFilter.render());
-  }
-
-  return fragment;
-};
-const createFilterStatisticMarkdown = (allFilters) => {
-  const fragment = document.createDocumentFragment();
-  for (const filter of allFilters) {
-    const newFilterStatistic = new FilterStatistic(filter);
-    let newStatistic = null;
-
-    newFilterStatistic.onClick = () => {
-      clearFilterCheckedStatus();
-      if (newStatistic === null) {
-        newStatistic = new Statistic(getUserStatisticData());
-      }
-
-      const oldStatistic = newStatistic.element;
-
-      if (!oldStatistic) {
-        main.appendChild(newStatistic.render());
-      } else {
-        newStatistic.unrender();
-        newStatistic.update(getUserStatisticData());
-        main.replaceChild(newStatistic.render(), oldStatistic);
-      }
-
-      document.querySelector(`.films`).classList.add(`visually-hidden`);
-      document.querySelector(`.statistic`).classList.remove(`visually-hidden`);
-
-      newStatistic.setData();
-    };
-
-    fragment.appendChild(newFilterStatistic.render());
-  }
-
-  return fragment;
-};
-
-mainNavigationField.appendChild(createFilterMarkdown(getFilterData()));
-mainNavigationField.appendChild(createFilterStatisticMarkdown(getFilterStatisticData()));
-
-const createFilmMarkdown = (data) => {
-  const fragment = document.createDocumentFragment();
-  for (const card of data) {
-    const newFilm = new FilmCard(card);
-    const newFilmDetalis = new FilmDetalis(card);
-
-    newFilm.onClick = () => {
-      body.appendChild(newFilmDetalis.render());
-    };
-    newFilm.onAddToWatchList = (event) => {
-      event.preventDefault();
-      card.userState.isWatchlist = !card.userState.isWatchlist;
-    };
-    newFilm.onAddToFavorites = (event) => {
-      event.preventDefault();
-      card.userState.isFavorite = !card.userState.isFavorite;
-    };
-    newFilm.onMarkAsWatched = (event) => {
-      event.preventDefault();
-      card.userState.isWatched = !card.userState.isWatched;
-    };
-    newFilmDetalis.onClick = () => {
-      body.removeChild(newFilmDetalis.element);
-      newFilmDetalis.unrender();
-    };
-    newFilmDetalis.onUserRatingChange = (newData) => {
-
-      //console.log(card);
-     // console.log('--------------');
-     // console.log(newData);
-
-
-      Object.assign(card, newData);
-      newFilmDetalis.update(card);
-
-
-
-      api.updateFilm({id: card.id, data: card.toRAW()})
-        .then((newTask) => {
-
-        let oldFilmDetalis = newFilmDetalis.element;
-
-        newFilmDetalis.unrender();
-        newFilmDetalis.render();
-
-          body.replaceChild(newFilmDetalis.element, oldFilmDetalis);
-          oldFilmDetalis = null;
-      });
-      /*
-
-
-
-
-      body.removeChild(newFilmDetalis.element);
-      newFilmDetalis.unrender();
-      */
-    };
-    newFilmDetalis.onUserCommentSend = (newData) => {
-      Object.assign(card, newData);
-
-      api.updateFilm({id: card.id, data: card.toRAW()})
-        .then((newTask) => {
-          newFilmDetalis.update(card);
-
-        let oldFilmDetalis = newFilmDetalis.element;
-          newFilmDetalis.unrender();
-          newFilmDetalis.render();
-        body.appendChild(newFilmDetalis.element);
-        //body.replaceChild(newFilmDetalis.element, oldFilmDetalis);
-        oldFilmDetalis = null;
-
-      });
-
-      /*
-      let oldFilmCard = newFilm.element;
-      newFilm.unrender();
-      newFilm.render();
-      mainFilmsLabel.replaceChild(newFilm.element, oldFilmCard);
-      oldFilmCard = null;
-
-      body.removeChild(newFilmDetalis.element);
-      newFilmDetalis.unrender();
-      */
-    };
-
-    fragment.appendChild(newFilm.render());
-  }
-
-  return fragment;
-};
-
-const api = new API(BASE_URL, AUTHORIZATION);
-const allCards = [];
-api.getFilms()
-  .then((tasks) => {
-    tasks.map((el) => allCards.push(el));
-    mainFilmsLabel.appendChild(createFilmMarkdown(allCards))
-  })
-
-const createCards = (count) => {
-  const allCard = [];
-  for (let i = 0; i < count; i++) {
-    allCard.push(getCardData());
-  }
-  return allCard;
-};
-
-const extraFilmsLabels = document.querySelectorAll(`.films-list--extra .films-list__container`);
-extraFilmsLabels.forEach((el) => {
-  el.appendChild(createFilmMarkdown(createCards(2)));
+const AUTHORIZATION = `Basic Olegoon_s8`;
+const BASE_URL = ` https://es8-demo-srv.appspot.com/moowle`;
+const DATA_STORE_KEY = `Olegoon_s8-key`;
+const api = new API({
+  baseUrl: BASE_URL,
+  authorization: AUTHORIZATION
 });
+const store = new Store({key: DATA_STORE_KEY, storage: localStorage});
+const provider = new Provider({api, store});
+
+const mainElement = document.querySelector(`main`);
+const footerStatisticsElement = document.querySelector(`.footer__statistics`);
+const userRankElement = document.querySelector(`.profile__rating`);
+const headerElement = document.querySelector(`.header`);
+const searchReferenceElement = headerElement.querySelector(`.profile`);
+
+const loadInProcessComponent = new LoadInProcessComponent();
+const loadErrorComponent = new LoadErrorComponent();
+
+let cardsList;
+let filtersComponent;
+let cardsSectionsComponent;
+let statisticsComponent;
+let searchComponent;
+
+const updateCardsList = (updatedData, id) => {
+  provider.updateData({id: updatedData.id, newData: CardModel.toRAW(updatedData)})
+    .then((cardModel) => {
+      const index = cardsList.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        cardsList[index] = Object.assign({}, cardModel);
+        setFiltersCounts(cardsList);
+        userRankElement.innerHTML = setUserRank(cardsList.filter((card) => card.isWatched).length);
+      }
+    });
+};
+
+const onFilterSelect = (id) => {
+  if (statisticsComponent) {
+    statisticsComponent.unrender();
+    mainElement.removeChild(mainElement.lastChild);
+    addCards();
+  }
+  cardsSectionsComponent.update(getFilteredCards(cardsList)[id]());
+  searchComponent.reset();
+};
+
+const addFilters = () => {
+  filtersComponent = new FiltersComponent(FILTER_DATA);
+  mainElement.insertBefore(filtersComponent.render(), mainElement.firstChild);
+  filtersComponent.onSelect = onFilterSelect;
+  setFiltersCounts(cardsList);
+  document.querySelector(`#stats`).addEventListener(`click`, onStatsClick);
+};
+
+const updateCardData = (callback, id) => (cardModel) => {
+  const index = cardsList.findIndex((item) => item.id === id);
+  if (index !== -1) {
+    cardsList[index] = Object.assign({}, cardModel);
+    callback();
+  }
+};
+
+const addCards = () => {
+  cardsSectionsComponent = new CardsSectionsComponent(cardsList);
+  mainElement.appendChild(cardsSectionsComponent.render());
+  cardsSectionsComponent.onCardsChange = updateCardsList;
+
+  cardsSectionsComponent.onCommentSubmit = (updatedData, id, popup) => {
+    provider.updateData({id: updatedData.id, newData: CardModel.toRAW(updatedData)})
+      .then(updateCardData(popup.enableCommentForm, id))
+      .catch(popup.showCommentSubmitError);
+  };
+
+  cardsSectionsComponent.onRatingSubmit = (updatedData, id, popup) => {
+    provider.updateData({id: updatedData.id, newData: CardModel.toRAW(updatedData)})
+      .then(updateCardData(popup.showNewRating, id))
+      .catch(popup.showRatingSubmitError);
+  };
+};
+
+const onSearch = (value) => {
+  if (value && cardsSectionsComponent._element) {
+    cardsSectionsComponent.onSearch(value);
+  } else if (cardsSectionsComponent._element) {
+    cardsSectionsComponent.updateMainBlockElement();
+  }
+};
+
+const addSearch = () => {
+  searchComponent = new SearchComponent();
+  headerElement.insertBefore(searchComponent.render(), searchReferenceElement);
+  searchComponent.onSearch = onSearch;
+};
+
+const onStatsClick = () => {
+  cardsSectionsComponent.unrender();
+  mainElement.removeChild(mainElement.lastChild);
+  statisticsComponent = new StatisticsComponent(cardsList);
+  mainElement.appendChild(statisticsComponent.render());
+  searchComponent.reset();
+};
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncData();
+});
+
+mainElement.appendChild(loadInProcessComponent.render());
+provider.getData()
+  .then((data) => {
+    cardsList = data;
+    mainElement.removeChild(loadInProcessComponent.element);
+    loadInProcessComponent.unrender();
+    addCards();
+    addFilters();
+    footerStatisticsElement.innerHTML = `${cardsList.length} movies inside`;
+    userRankElement.innerHTML = setUserRank(cardsList.filter((card) => card.isWatched).length);
+  })
+  .catch(() => {
+    mainElement.innerHTML = ``;
+    mainElement.appendChild(loadErrorComponent.render());
+  });
+
+addSearch();

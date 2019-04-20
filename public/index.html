@@ -22,6 +22,7 @@
 
 </main>
 
+
 <footer class="footer">
   <section class="footer__logo logo logo--smaller">Moowle</section>
   <section class="footer__statistics">
@@ -29,16 +30,15 @@
   </section>
 </footer>
 
-<script src="bundle.js"></script>
-
-<script>
-  navigator.serviceWorker.register('service-worker.js')
+<script type="module" src="./bundle.js"></script>
+<script type="text/javascript">
+  navigator.serviceWorker.register('./service-worker.js')
     .then(function(reg) {
-    console.log('Registration succeeded. Scope is ' + reg.scope);
-  })
+      console.log('Registration succeeded. Scope is ' + reg.scope);
+    })
     .catch(function(error) {
-    console.log('Registration failed with ' + error);
-  });
+      console.log('Registration failed with ' + error);
+    });
 </script>
 
 </body>

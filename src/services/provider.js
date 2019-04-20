@@ -1,4 +1,4 @@
-import Adapter from '../src/data-adapter.js';
+import CardModel from '../models/card-model';
 
 const createArrayFromObjectData = (object) => {
   return Object.keys(object).map((id) => object[id]);
@@ -15,13 +15,13 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.getData()
         .then((data) => {
-          data.map((it) => this._store.setItem({key: it.id, item: Adapter.toRAW(it)}));
+          data.map((it) => this._store.setItem({key: it.id, item: CardModel.toRAW(it)}));
           return data;
         });
     } else {
       const rawDataMap = this._store.getAll();
       const rawData = createArrayFromObjectData(rawDataMap);
-      const data = Adapter.parseData(rawData);
+      const data = CardModel.parseData(rawData);
 
       return Promise.resolve(data);
     }
@@ -31,14 +31,14 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.updateData({id, newData})
         .then((datum) => {
-          this._store.setItem({key: datum.id, item: Adapter.toRAW(datum)});
+          this._store.setItem({key: datum.id, item: CardModel.toRAW(datum)});
           return datum;
         });
     } else {
       const datum = newData;
       this._needSync = true;
       this._store.setItem({key: datum.id, item: datum});
-      return Promise.resolve(Adapter.parseDatum(datum));
+      return Promise.resolve(CardModel.parseDatum(datum));
     }
   }
 
