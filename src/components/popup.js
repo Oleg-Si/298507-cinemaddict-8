@@ -18,6 +18,12 @@ const RatingElementColor = {
   CHECKED: `#ffe800`
 };
 
+const Emoji = {
+  'sleeping': `😴`,
+  'neutral-face': `😐`,
+  'grinning': `😀`
+};
+
 export default class PopupComponent extends Component {
   constructor(data) {
     super(data);
@@ -36,6 +42,7 @@ export default class PopupComponent extends Component {
     this.showCommentSubmitError = this.showCommentSubmitError.bind(this);
     this.showNewRating = this.showNewRating.bind(this);
     this.showRatingSubmitError = this.showRatingSubmitError.bind(this);
+    this._onEmojiClick = this._onEmojiClick.bind(this);
   }
 
   get template() {
@@ -137,6 +144,7 @@ export default class PopupComponent extends Component {
       this._addToWatchedElement = this._element.querySelector(`#watched`);
       this._addToFavoriteElement = this._element.querySelector(`#favorite`);
       this._removeCommentElement = this._element.querySelector(`.film-details__watched-reset`);
+      this._element.querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._onEmojiClick);
 
       this._closeButtonElement.addEventListener(`click`, this._onCloseButtonClick);
       this._ratingElements.forEach((input) => {
@@ -163,6 +171,7 @@ export default class PopupComponent extends Component {
       this._addToFavoriteElement.removeEventListener(`click`, this._onAddToFavoriteButtonClick);
       this._removeCommentElement.removeEventListener(`click`, this._onCommentRemove);
       window.removeEventListener(`keydown`, this._onEscClick);
+      this._element.querySelector(`.film-details__emoji-list`).removeEventListener(`click`, this._onEmojiClick);
 
       this._closeButtonElement = null;
       this._ratingElements = null;
@@ -200,6 +209,14 @@ export default class PopupComponent extends Component {
     if (evt.keyCode === KeyCode.ESC) {
       this._onCloseButtonClick(evt);
     }
+  }
+
+  _onEmojiClick() {
+    if (event.target.classList.contains(`film-details__emoji-item`)) {
+      const emoji = event.target.getAttribute(`value`);
+      document.querySelector(`.film-details__add-emoji-label`).textContent = Emoji[emoji];
+    }
+    document.querySelector(`#add-emoji`).checked = false;
   }
 
   _onCommentFormInput() {
