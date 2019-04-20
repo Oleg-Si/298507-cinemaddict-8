@@ -1,3 +1,5 @@
+const CACHE_NAME = `MOOWIES_CACHE`;
+
 const checkUrl = (url) => {
   const fistValue = /sockjs-node/g;
   const secondValue = /fonts/g;
@@ -5,7 +7,7 @@ const checkUrl = (url) => {
 };
 
 self.addEventListener(`install`, (evt) => {
-  const openCache = caches.open('MOOWIES_V')
+  const openCache = caches.open(CACHE_NAME)
     .then((cache) => {
       return cache.addAll([
         `./`,
