@@ -9,7 +9,11 @@ export default class CardModel {
     this.rating = data[`film_info`][`total_rating`];
     this.year = data[`film_info`][`release`][`date`];
     this.duration = data[`film_info`][`runtime`] * MILLISECONDS_AMOUNT * SECONDS_AMOUNT;
-    this.genre = data[`film_info`][`genre`];
+    if (data[`film_info`][`genre`].length) {
+      this.genre = data[`film_info`][`genre`];
+    } else {
+      this.genre = [`No genre`];
+    }
     this.image = data[`film_info`][`poster`];
     this.description = data[`film_info`][`description`];
     this.commentsAmount = data[`comments`].length;
@@ -24,7 +28,7 @@ export default class CardModel {
       releaseDay: data[`film_info`][`release`][`date`],
       runtime: data[`film_info`][`runtime`] * MILLISECONDS_AMOUNT * SECONDS_AMOUNT,
       country: data[`film_info`][`release`][`release_country`],
-      genres: data[`film_info`][`genre`],
+      genres: this.genre,
       ageLimit: data[`film_info`][`age_rating`],
       original: data[`film_info`][`alternative_title`],
       yourRating: data[`user_details`][`personal_rating`].toString(),

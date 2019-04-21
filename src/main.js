@@ -12,9 +12,9 @@ import CardModel from './models/card-model';
 import Provider from './services/provider';
 import Store from './services/store';
 
-const AUTHORIZATION = `Basic Olegoon_s8`;
+const AUTHORIZATION = `Basic Olegoon_s9`;
 const BASE_URL = ` https://es8-demo-srv.appspot.com/moowle`;
-const DATA_STORE_KEY = `Olegoon_s8-key`;
+const DATA_STORE_KEY = `Olegoon_s9-key`;
 const api = new API({
   baseUrl: BASE_URL,
   authorization: AUTHORIZATION

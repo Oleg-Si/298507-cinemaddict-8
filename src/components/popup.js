@@ -144,7 +144,7 @@ export default class PopupComponent extends Component {
       this._addToWatchedElement = this._element.querySelector(`#watched`);
       this._addToFavoriteElement = this._element.querySelector(`#favorite`);
       this._removeCommentElement = this._element.querySelector(`.film-details__watched-reset`);
-      this._element.querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._onEmojiClick);
+      this._element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._onEmojiClick);
 
       this._closeButtonElement.addEventListener(`click`, this._onCloseButtonClick);
       this._ratingElements.forEach((input) => {
@@ -171,7 +171,7 @@ export default class PopupComponent extends Component {
       this._addToFavoriteElement.removeEventListener(`click`, this._onAddToFavoriteButtonClick);
       this._removeCommentElement.removeEventListener(`click`, this._onCommentRemove);
       window.removeEventListener(`keydown`, this._onEscClick);
-      this._element.querySelector(`.film-details__emoji-list`).removeEventListener(`click`, this._onEmojiClick);
+      this._element.querySelector(`.film-details__emoji-list`).removeEventListener(`change`, this._onEmojiClick);
 
       this._closeButtonElement = null;
       this._ratingElements = null;
@@ -212,10 +212,13 @@ export default class PopupComponent extends Component {
   }
 
   _onEmojiClick() {
-    if (event.target.classList.contains(`film-details__emoji-item`)) {
-      const emoji = event.target.getAttribute(`value`);
-      document.querySelector(`.film-details__add-emoji-label`).textContent = Emoji[emoji];
-    }
+    const emojiInputs = this._element.querySelector(`.film-details__emoji-list`).querySelectorAll(`.film-details__emoji-item`);
+    emojiInputs.forEach((el) => {
+      if (el.checked) {
+        const emoji = el.getAttribute(`value`);
+        document.querySelector(`.film-details__add-emoji-label`).textContent = Emoji[emoji];
+      }
+    });
     document.querySelector(`#add-emoji`).checked = false;
   }
 

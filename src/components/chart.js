@@ -1,8 +1,8 @@
 import Chart from 'chart.js';
-import Compoentn from './component';
+import Compoent from './component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-export default class ChartComponent extends Compoentn {
+export default class ChartComponent extends Compoent {
 
   get chartSetting() {
     return {
